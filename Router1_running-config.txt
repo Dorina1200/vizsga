@@ -1,0 +1,117 @@
+!
+version 12.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+interface FastEthernet0/0
+ ip address 192.168.100.1 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/0.100
+ no ip address
+!
+interface FastEthernet0/0.110
+ encapsulation dot1Q 110
+ ip address 192.168.110.1 255.255.255.0
+!
+interface FastEthernet0/0.120
+ encapsulation dot1Q 120
+ ip address 192.168.120.1 255.255.255.0
+!
+interface FastEthernet0/0.130
+ encapsulation dot1Q 130
+ ip address 192.168.130.1 255.255.255.0
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 192.168.20.1 255.255.255.0
+!
+interface Serial0/0/1
+ ip address 192.168.30.1 255.255.255.0
+ clock rate 2000000
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 115
+ log-adjacency-changes
+ network 192.168.110.0 0.0.0.255 area 0
+ network 192.168.120.0 0.0.0.255 area 0
+ network 192.168.130.0 0.0.0.255 area 0
+ network 192.168.140.0 0.0.0.255 area 0
+ network 192.168.150.0 0.0.0.255 area 0
+ network 192.168.20.1 0.0.0.0 area 0
+ network 192.168.10.1 0.0.0.0 area 0
+ network 192.168.100.1 0.0.0.0 area 0
+ network 192.168.30.1 0.0.0.0 area 0
+!
+router ospf 600
+ log-adjacency-changes
+!
+router ospf 10
+ log-adjacency-changes
+!
+router rip
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

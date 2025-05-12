@@ -1,0 +1,142 @@
+!
+version 12.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+ip dhcp excluded-address 192.168.140.1 192.168.140.99
+!
+ip dhcp pool pool1
+ network 192.168.140.0 255.255.255.0
+ default-router 192.168.140.1
+ dns-server 8.8.8.8
+!
+!
+aaa new-model
+!
+aaa authentication login KeletiVPN local 
+!
+!
+aaa authorization network KeletiVPN2 local
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+username Gyartas password 0 Keleti1
+!
+!
+crypto isakmp policy 10
+ encr 3des
+ hash md5
+ authentication pre-share
+ group 2
+!
+!
+!
+crypto isakmp client configuration group gyartasCsoport
+ key Keleti
+ pool VPNPOOL
+!
+!
+crypto ipsec transform-set set1 esp-3des esp-md5-hmac
+!
+crypto dynamic-map map1 10
+ set transform-set set1 
+ reverse-route
+!
+crypto map map1 client authentication list KeletiVPN
+crypto map map1 isakmp authorization list KeletiVPN2
+crypto map map1 client configuration address respond
+crypto map map1 10 ipsec-isakmp dynamic map1
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+interface FastEthernet0/0
+ ip address 192.168.140.1 255.255.255.0
+ ip access-group 100 out
+ duplex auto
+ speed auto
+ crypto map map1
+!
+interface FastEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ crypto map map1
+!
+interface Serial0/0/0
+ ip address 192.168.20.2 255.255.255.0
+ clock rate 2000000
+!
+interface Serial0/0/1
+ ip address 192.168.10.2 255.255.255.0
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 115
+ router-id 2.2.2.2
+ log-adjacency-changes
+ network 192.168.110.0 0.0.0.255 area 0
+ network 192.168.120.0 0.0.0.255 area 0
+ network 192.168.130.0 0.0.0.255 area 0
+ network 192.168.140.0 0.0.0.255 area 0
+ network 192.168.150.0 0.0.0.255 area 0
+ network 192.168.20.2 0.0.0.0 area 0
+ network 192.168.10.2 0.0.0.0 area 0
+ network 192.168.140.1 0.0.0.0 area 0
+!
+router ospf 10
+ log-adjacency-changes
+ network 192.168.20.2 0.0.0.0 area 0
+!
+router rip
+!
+ip local pool VPNPOOL 192.168.140.1 192.168.140.50
+ip classless
+!
+ip flow-export version 9
+!
+!
+access-list 100 permit ip 192.168.1.0 0.0.0.255 10.0.0.0 0.255.255.255
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+!
+!
+!
+end
+
